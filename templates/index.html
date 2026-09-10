@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Email Report Cleaner</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-mark" aria-hidden="true">ER</div>
+    <div>
+      <h1>Email Report Cleaner</h1>
+      <p>Outlook CSV to review-ready Markdown</p>
+    </div>
+    <span class="local-status"><span aria-hidden="true"></span>Local only</span>
+  </header>
+
+  <main>
+    <section class="workspace" aria-labelledby="workspace-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">New conversion</p>
+          <h2 id="workspace-title">Build a clean email archive</h2>
+        </div>
+        <p class="privacy-note">Files are processed on this computer and discarded after conversion.</p>
+      </div>
+
+      <form id="convert-form">
+        <label class="drop-zone" id="drop-zone" for="files">
+          <input id="files" name="files" type="file" accept=".csv,text/csv" multiple required>
+          <span class="upload-symbol" aria-hidden="true">↑</span>
+          <strong>Drop Outlook CSV files here</strong>
+          <span>or choose files from your computer</span>
+          <small>Standard Outlook exports and ReceivedTime-enhanced exports are supported</small>
+        </label>
+
+        <div id="file-list" class="file-list" aria-live="polite"></div>
+
+        <div class="controls-band">
+          <label>
+            <span>Start date</span>
+            <input id="start" name="start" type="date" value="2025-10-01" required>
+          </label>
+          <label>
+            <span>End date</span>
+            <input id="end" name="end" type="date" value="{{ today }}" required>
+          </label>
+          <button id="convert-button" type="submit">Clean and convert</button>
+        </div>
+
+        <details class="cleanup-details">
+          <summary>Cleanup applied</summary>
+          <ul>
+            <li>Email addresses and Exchange routing IDs are redacted</li>
+            <li>SafeLink tracking, known signatures, and excess spacing are removed</li>
+            <li>Quoted reply history is omitted while each message's new content is retained</li>
+            <li>Undated and out-of-range messages are excluded and counted</li>
+          </ul>
+        </details>
+      </form>
+    </section>
+
+    <section id="results" class="results" hidden aria-labelledby="results-title">
+      <div class="section-heading result-heading">
+        <div>
+          <p class="eyebrow">Conversion complete</p>
+          <h2 id="results-title">Your archive is ready</h2>
+        </div>
+        <button id="download-button" class="download-button" type="button">Download Markdown</button>
+      </div>
+
+      <div class="stats" aria-label="Conversion summary">
+        <div><strong id="included-count">0</strong><span>Included</span></div>
+        <div><strong id="undated-count">0</strong><span>Undated excluded</span></div>
+        <div><strong id="outside-count">0</strong><span>Outside range</span></div>
+        <div><strong id="source-count">0</strong><span>Source files</span></div>
+      </div>
+
+      <div class="preview-header">
+        <h3>Markdown preview</h3>
+        <span id="output-name"></span>
+      </div>
+      <pre id="preview" tabindex="0"></pre>
+    </section>
+
+    <div id="error-message" class="error-message" role="alert" hidden></div>
+  </main>
+
+  <footer>Runs at <code>127.0.0.1</code>. No data leaves this device.</footer>
+</body>
+</html>
